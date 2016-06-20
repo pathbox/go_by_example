@@ -115,3 +115,74 @@ func (df *myDataFile) Wsn() int64{
   return df.woffset / int64(df.dataLen)
 }
 
+// 加入条件变量的Read
+func (df *myDataFile) Read()(rsn int64, d Data, err error){
+  //省略若干代码
+
+  //读取一个数据块
+  rsn = offset / int64(df.dataLen)
+  bytes := make([]byte, df.dataLen)
+  df.fmutex.RLock()
+  defer df.fmutex.RUnlock()
+  for {
+    _,err = df.f.ReadAt(bytes, offset)
+    if err!=nil{
+      if err == io.EOF{
+        df.rcond.Wait()
+        continue
+      }
+      return
+    }
+    d = bytes
+    return
+  }
+}
+
+// 加入条件变量的Write
+func (df *myDataFile) Write(d Data)(wsn int64, err error){
+
+  //省略若干语句
+  var bytes []byte
+  df.fmutex.Lock()
+  defer df.fmutex.Unlock()
+  _,err = df.f.Write(bytes)
+  df.rcond.Signal()
+  return
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
