@@ -126,6 +126,9 @@ func main(){
 	}
 }
 
+// Due to the ubiquity of Readers and Writers, these Encoder and Decoder types can be used in a broad 
+// range of scenarios, such as reading and writing to HTTP connections, WebSockets, or files.
+
 
 
 
